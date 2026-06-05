@@ -1,310 +1,529 @@
-**Este documento apresenta os principais endpoints da API Inven, os parâmetros esperados, formatos de resposta, autenticação e exemplos de chamadas. A API será planejada para facilitar o cadastro, consulta e gerenciamento para os empreendedores.**
+# Documentação da API Inven
+
+> **Base URL (desenvolvimento):** `http://localhost/inven/api.php`  
+> **Formato:** Todas as requisições e respostas utilizam `Content-Type: application/json`  
+> **Autenticação:** JWT via header `Authorization: Bearer <token>`
 
 ---
+
 ## Sumário
 
-1. [Endpoints Previstos](#endpoints-previstos)
-2. [Parâmetros de Requisição](#parâmetros-de-requisição)
-3. [Formatos de resposta](#formatos-de-resposta)
-4. [Autenticação e Autorização](#autenticação-e-autorização)
-5. [Exemplos de chamadas e respostas](#exemplos-de-chamadas-e-respostas)
-
-## Endpoints Previstos
-
-| Método | Rota                          | Descrição                                 | Protegida |
-|--------|-------------------------------|-------------------------------------------|-----------|
-| POST   | /usuarios/cadastroUsuario     | Cadastro de novo usuário                  | Não       |
-| POST   | /usuarios/login               | Autenticação e geração de token JWT       | Não       |
-| POST   | /empreendimentos              | Cadastro de materiais                     | Sim       |
-| PUT    | /empreendimentos/:id          | Edição de materiais                       | Sim       |
-| DELETE | /empreendimentos/:id          | Exclusão de mateirias                     | Sim       |
-| GET    | /empreendimentos              | Listagem e busca de materiais             | Não       |
+1. [Autenticação e Autorização](#1-autenticação-e-autorização)
+2. [Formato Padrão de Resposta](#2-formato-padrão-de-resposta)
+3. [Endpoints de Usuários](#3-endpoints-de-usuários)
+4. [Endpoints de Materiais](#4-endpoints-de-materiais)
+5. [Endpoints de Estoque e Movimentações](#5-endpoints-de-estoque-e-movimentações)
+6. [Códigos de Status HTTP](#6-códigos-de-status-http)
+7. [Exemplos de Chamadas](#7-exemplos-de-chamadas)
 
 ---
 
-## Parâmetros de Requisição
+## 1. Autenticação e Autorização
 
-### Headers
+A API utiliza **JWT (JSON Web Token)** para autenticação. O token é gerado no login e deve ser enviado no header de todas as rotas protegidas.
 
 ```http
-Content-Type: application/json
-Authorization: Bearer SEU_TOKEN_JWT  // Apenas para rotas protegidas
+Authorization: Bearer SEU_TOKEN_JWT
 ```
 
-### Body (JSON)
+**Características do token:**
+- Algoritmo: HMAC-SHA256
+- Expiração: 7 dias
+- Payload: `{ id, email, exp }`
 
-- Selecione a opção raw
+**Rotas públicas** (não exigem token):
+- `POST ?rota=cadastro`
+- `POST ?rota=login`
+- `GET  ?rota=status`
 
-- Escolha o tipo JSON
+**Rotas protegidas** (exigem token válido):
+- Todas as rotas de materiais, estoque e movimentações
 
-- Insira os dados conforme os exemplos abaixo
+---
 
-## Formatos de resposta
+## 2. Formato Padrão de Resposta
 
-Todas as respostas da API seguirão o formato JSON, com estrutura padronizada: 
+### Sucesso
 
 ```json
 {
   "mensagem": "Operação realizada com sucesso",
-  "dados": {
-    "Conteúdo retornado"
-  }
+  "dados": { }
 }
 ```
-### Em caso de erro:
+
+### Erro
 
 ```json
 {
   "erro": "Descrição do erro"
 }
 ```
----
-
-## Autenticação e Autorização
-
-A API utilizará JWT (JSON Web Token) para autenticação. Após o login, o token deverá ser incluído no header das requisições protegidas:
-
-```Http
-Authorization: Bearer SEU_TOKEN_JWT
-```
-- Rotas públicas: /usuarios/cadastroUsuario, /usuarios/login, /materiais (GET)
-
-- Rotas protegidas: /materiais (POST, PUT, DELETE)
-
-### Integração com o Frontend
-
-No frontend, o token será armazenado no localStorage após o login do usuário. Para chamadas às rotas protegidas, o token será recuperado e incluído no header da requisição utilizando a função fetch.
-
-Exemplo de uso com fetch:
-
-```javascript
-const token = localStorage.getItem("token");
-
-fetch("/materiais", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
-  },
-  body: JSON.stringify({
-    nome: "Blusa p",
-    quantidade: "10",
-    preco: "20",
-    // demais campos...
-  })
-});
-```
-Essa abordagem garantirá que apenas usuários autenticados possam acessar funcionalidades sensíveis, como cadastro, edição e exclusão de materiais.
-
 
 ---
 
-## Exemplos de chamadas e respostas
+## 3. Endpoints de Usuários
 
-### Cadastro de Usuário
+### 3.1 Health Check
 
-**POST /usuarios/cadastroUsuario**
+```
+GET http://localhost/inven/api.php?rota=status
+```
 
-Requisição:
+**Autenticação:** Não  
+**Parâmetros:** Nenhum
 
+**Resposta (200):**
 ```json
 {
-  "nome": "Teste",
-  "email": "teste@email.com",
-  "senha": "123456"
+  "app": "Inven API",
+  "status": "online"
 }
 ```
 
-Resposta esperada:
+---
 
+### 3.2 Cadastro de Usuário
+
+```
+POST http://localhost/inven/api.php?rota=cadastro
+```
+
+**Autenticação:** Não
+
+**Body (JSON):**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `nome` | string | Sim | Nome completo do usuário |
+| `email` | string | Sim | E-mail válido e único |
+| `senha` | string | Sim | Mínimo 6 caracteres |
+
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "senha": "minhasenha123"
+}
+```
+
+**Resposta (201):**
 ```json
 {
   "mensagem": "Usuário cadastrado com sucesso",
-  "_id": "68b4d4cdb98dfb4abe6addff",
-  "nome": "Teste Usuário",
-  "email": "teste@teste.com",
-  "token": "TOKEN_JWT_GERADO"
+  "id": 1,
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-### Login
+**Erros possíveis:**
 
-**POST /usuarios/login**
+| Status | Mensagem |
+|---|---|
+| 422 | `Preencha nome, email e senha.` |
+| 422 | `E-mail inválido.` |
+| 422 | `Senha precisa ter mínimo 6 caracteres.` |
+| 409 | `E-mail já cadastrado.` |
+| 500 | `Banco de dados indisponível.` |
 
-Requisição:
+---
+
+### 3.3 Login
+
+```
+POST http://localhost/inven/api.php?rota=login
+```
+
+**Autenticação:** Não
+
+**Body (JSON):**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `email` | string | Sim | E-mail cadastrado |
+| `senha` | string | Sim | Senha do usuário |
 
 ```json
 {
-  "email": "teste@email.com",
-  "senha": "123456"
+  "email": "maria@email.com",
+  "senha": "minhasenha123"
 }
 ```
 
-Resposta esperada:
-
+**Resposta (200):**
 ```json
 {
-  "_id": "689fb6a91270e26fb9e6b14a",
-  "nome": "Teste Usuário",
-  "email": "teste@teste.com",
-  "token": "TOKEN_JWT_GERADO"
+  "id": 1,
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-### Cadastro de Materiais
+**Erros possíveis:**
 
-**POST /Materiais**
+| Status | Mensagem |
+|---|---|
+| 422 | `Informe email e senha.` |
+| 401 | `Email ou senha incorretos.` |
 
-Requisição:
+---
 
+## 4. Endpoints de Materiais
+
+> Todos os endpoints de materiais exigem autenticação. Os dados retornados pertencem exclusivamente ao usuário autenticado.
+
+---
+
+### 4.1 Listar Materiais
+
+```
+GET http://localhost/inven/api.php?rota=materiais
+```
+
+**Autenticação:** Sim  
+**Parâmetros de query (opcionais):**
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `busca` | string | Filtra por descrição ou fonte (busca parcial) |
+
+**Exemplo com filtro:**
+```
+GET http://localhost/inven/api.php?rota=materiais&busca=blusa
+```
+
+**Resposta (200):**
 ```json
 {
-  "descricao": "Blusa P",
-  "preco"    : "20",
-  "fonte"    : "Riachuelo",
-  "telefone": "85998989999",
-  "email": "Riachuelo.com",
-  "palavrasChave": ["Blusa", "p", "vestimenta"]
-}
-```
-
-### Edição de Materiais
-
-**PUT /Materiais/:id**
-
-Requisição (exemplo de múltiplos campos):
-
-```json
-{
-  "descricao": "Blusa P",
-  "fonte"    : "Ricardo almeida",
-  },
-  "palavrasChave": ["Blusa P", "Roupa", "Vestimena"]
-}
-```
-### Exclusão de materiais
-
-**DELETE /materiais/:id**
-
-Requisição:
-
-```http
-DELETE /material/ID_DO_MATERIAL
-Authorization: Bearer SEU_TOKEN_JWT
-```
-Resposta esperada:
-
-```json
-{
-  "mensagem": "Material deletado com sucesso"
-}
-```
-
-### 🔍 Listagem e Busca de Empreendimentos
-
-**GET /Materiais**
-
-A API permitirá listar todos os Materiais cadastrados e realizará buscas específicas utilizando filtros via query params. Abaixo estão os principais filtros planejados:
-
-| Filtro           | Exemplo de Requisição                                               |
-|------------------|----------------------------------------------------------------------|
-| Material         | `/empreendimentos?material=blusa`            |
-| fonte            | `/empreendimentos?fonte=riachuelo`                                     |
-| Palavra-chave    | `/empreendimentos?palavra=vestimenta`                                     |
-
-**Resposta esperada:**  
-
-Ao utilizar o query params GET `/material?fonte=riachuelo` a API retornará os dados dos materiais separados por fonte, exibindo também os preços.
-
-
-```json
-[
-  {
-    "fonte"    : "riachuelo",
-    "material" : "Blusa P",
-    "preco"    : "80",
+  "dados": [
+    {
+      "id": 1,
+      "usuario_id": 1,
+      "descricao": "Blusa P",
+      "preco": "20.00",
+      "fonte": "Riachuelo",
+      "telefone": "85 99999-9999",
+      "email": "riachuelo@email.com",
+      "estoque": "10.000",
+      "criado_em": "2025-03-10 14:32:00",
+      "palavras_chave": ["Blusa", "Roupa", "Feminino"]
     }
-    .
-    .  
-    .
-]
-```
-
-### Respostas de Erro (Padronizadas)
-
-```json
-{
-  "erro": "Material já cadastrado"
+  ]
 }
 ```
 
+---
+
+### 4.2 Cadastrar Material
+
+```
+POST http://localhost/inven/api.php?rota=materiais
+```
+
+**Autenticação:** Sim
+
+**Body (JSON):**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `descricao` | string | Sim | Nome/descrição do material |
+| `preco` | number | Sim | Preço unitário |
+| `fonte` | string | Sim | Nome do fornecedor/origem |
+| `telefone` | string | Não | Telefone do fornecedor |
+| `email` | string | Não | E-mail do fornecedor |
+| `palavras_chave` | array | Não | Lista de tags do material |
+
 ```json
 {
-  "erro": "Credenciais inválidas"
+  "descricao": "Blusa P",
+  "preco": 20.00,
+  "fonte": "Riachuelo",
+  "telefone": "85 99999-9999",
+  "email": "contato@riachuelo.com",
+  "palavras_chave": ["Blusa", "Roupa", "Feminino"]
 }
 ```
 
+**Resposta (201):**
 ```json
 {
-  "erro": "Token inválido ou expirado"
+  "mensagem": "Material cadastrado com sucesso",
+  "dados": {
+    "id": 1,
+    "usuario_id": 1,
+    "descricao": "Blusa P",
+    "preco": "20.00",
+    "fonte": "Riachuelo",
+    "telefone": "85 99999-9999",
+    "email": "contato@riachuelo.com",
+    "estoque": "0.000",
+    "criado_em": "2025-03-10 14:32:00"
+  }
 }
 ```
 
+**Erros possíveis:**
+
+| Status | Mensagem |
+|---|---|
+| 401 | `Token não enviado.` |
+| 401 | `Token inválido ou expirado.` |
+| 422 | `Campos obrigatórios: descricao, preco, fonte.` |
+
+---
+
+### 4.3 Editar Material
+
+```
+PUT http://localhost/inven/api.php?rota=materiais/{id}
+```
+
+**Autenticação:** Sim  
+**Parâmetros de rota:**
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `id` | integer | ID do material a editar |
+
+**Body (JSON):** Envie apenas os campos que deseja atualizar.
+
 ```json
 {
-  "erro": "Usuário não autorizado para esta ação"
+  "descricao": "Blusa P (nova coleção)",
+  "preco": 25.00,
+  "palavras_chave": ["Blusa", "Roupa", "Nova Coleção"]
 }
 ```
 
+**Resposta (200):**
 ```json
 {
-  "erro": "Erro ao editar material",
-  "camposObrigatorios": [
-    "material.preco",
-    "matrial.descricao",
-    "material.fonte",
-  ],
-  "mensagem": "Os seguintes campos são obrigatórios e não podem estar em branco: material.preco, material.descricao, material.fonte"
+  "mensagem": "Material atualizado com sucesso",
+  "dados": {
+    "id": 1,
+    "descricao": "Blusa P (nova coleção)",
+    "preco": "25.00",
+    "fonte": "Riachuelo",
+    "estoque": "10.000"
+  }
 }
 ```
 
-### Tratamento de Erros no Frontend
+**Erros possíveis:**
 
-As mensagens de erro retornadas pela API serão exibidas ao usuário por meio de alertas ou componentes visuais.  
-Exemplo com `fetch`:
+| Status | Mensagem |
+|---|---|
+| 401 | `Token não enviado.` |
+| 404 | `Material não encontrado.` |
+
+---
+
+### 4.4 Excluir Material
+
+```
+DELETE http://localhost/inven/api.php?rota=materiais/{id}
+```
+
+**Autenticação:** Sim  
+**Parâmetros de rota:**
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `id` | integer | ID do material a excluir |
+
+**Resposta (200):**
+```json
+{
+  "mensagem": "Material excluído com sucesso."
+}
+```
+
+**Erros possíveis:**
+
+| Status | Mensagem |
+|---|---|
+| 401 | `Token não enviado.` |
+| 404 | `Material não encontrado.` |
+
+---
+
+## 5. Endpoints de Estoque e Movimentações
+
+---
+
+### 5.1 Registrar Movimentação de Estoque
+
+```
+POST http://localhost/inven/api.php?rota=estoque/{id}/movimentar
+```
+
+**Autenticação:** Sim  
+**Parâmetros de rota:**
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `id` | integer | ID do material |
+
+**Body (JSON):**
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `tipo` | string | Sim | `entrada`, `saida` ou `ajuste` |
+| `quantidade` | number | Sim | Quantidade a movimentar (> 0) |
+| `observacao` | string | Não | Descrição da movimentação |
+
+```json
+{
+  "tipo": "entrada",
+  "quantidade": 5,
+  "observacao": "Compra nova coleção"
+}
+```
+
+**Resposta (200):**
+```json
+{
+  "mensagem": "Movimentação registrada.",
+  "novo_estoque": 15
+}
+```
+
+**Comportamento por tipo:**
+
+| Tipo | Efeito no estoque |
+|---|---|
+| `entrada` | `estoque = estoque + quantidade` |
+| `saida` | `estoque = estoque - quantidade` (mínimo 0) |
+| `ajuste` | `estoque = quantidade` (valor absoluto) |
+
+**Erros possíveis:**
+
+| Status | Mensagem |
+|---|---|
+| 401 | `Token não enviado.` |
+| 404 | `Material não encontrado.` |
+| 422 | `Tipo inválido. Use: entrada, saida ou ajuste.` |
+| 422 | `Quantidade deve ser maior que zero.` |
+| 422 | `Quantidade maior que o estoque atual (X).` |
+
+---
+
+### 5.2 Histórico de Movimentações
+
+```
+GET http://localhost/inven/api.php?rota=movimentacoes
+```
+
+**Autenticação:** Sim  
+**Parâmetros de query (opcionais):**
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `tipo` | string | Filtra por tipo: `entrada`, `saida` ou `ajuste` |
+| `material_id` | integer | Filtra por material específico |
+
+**Resposta (200):**
+```json
+{
+  "dados": [
+    {
+      "id": 3,
+      "material_id": 1,
+      "usuario_id": 1,
+      "tipo": "entrada",
+      "quantidade": "5.00",
+      "observacao": "Compra nova coleção",
+      "criado_em": "2025-03-10 15:00:00",
+      "material": "Blusa P"
+    }
+  ]
+}
+```
+
+> Retorna as últimas 100 movimentações em ordem cronológica decrescente.
+
+---
+
+## 6. Códigos de Status HTTP
+
+| Código | Significado | Quando ocorre |
+|---|---|---|
+| 200 | OK | Requisição bem-sucedida |
+| 201 | Created | Recurso criado com sucesso |
+| 204 | No Content | Preflight CORS (OPTIONS) |
+| 401 | Unauthorized | Token ausente, inválido ou expirado |
+| 404 | Not Found | Rota ou recurso não encontrado |
+| 409 | Conflict | E-mail já cadastrado |
+| 422 | Unprocessable Entity | Dados inválidos ou campos obrigatórios faltando |
+| 500 | Internal Server Error | Erro no servidor ou banco de dados |
+
+---
+
+## 7. Exemplos de Chamadas
+
+### JavaScript (Fetch API) — usado no frontend
 
 ```javascript
-fetch("/usuarios/login", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email, senha })
-})
-.then(res => res.json())
-.then(data => {
-  if (data.erro) {
-    alert(data.erro); // ou exibir em um componente de erro
-  } else {
-    localStorage.setItem("token", data.token);
-  }
-});
+// URL base da API
+const API = 'http://localhost/inven/api.php';
+
+// Função helper
+async function api(method, rota, body = null) {
+  const token = localStorage.getItem('inven_token');
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body)  opts.body = JSON.stringify(body);
+
+  const res = await fetch(`${API}?rota=${rota}`, opts);
+  return await res.json();
+}
+
+// Exemplos de uso:
+const login      = await api('POST', 'login', { email, senha });
+const materiais  = await api('GET',  'materiais');
+const novo       = await api('POST', 'materiais', { descricao, preco, fonte });
+const editado    = await api('PUT',  `materiais/${id}`, { preco: 25 });
+const deletado   = await api('DELETE', `materiais/${id}`);
+const entrada    = await api('POST', `estoque/${id}/movimentar`, { tipo: 'entrada', quantidade: 10 });
+const historico  = await api('GET',  'movimentacoes');
 ```
-### Validação no Frontend
 
-Antes de enviar dados para a API, o frontend fará validações como:
+### cURL — para testes no terminal
 
-- Garantir que a senha tenha no mínimo 6 caracteres.
+```bash
+# Cadastrar usuário
+curl -X POST "http://localhost/inven/api.php?rota=cadastro" \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Maria Silva","email":"maria@email.com","senha":"123456"}'
 
-- Impedir envio de campos obrigatórios em branco.
+# Login
+curl -X POST "http://localhost/inven/api.php?rota=login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"maria@email.com","senha":"123456"}'
 
+# Listar materiais (com token)
+curl -X GET "http://localhost/inven/api.php?rota=materiais" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
 
-### Segurança de Origem (CORS)
+# Cadastrar material
+curl -X POST "http://localhost/inven/api.php?rota=materiais" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -d '{"descricao":"Blusa P","preco":20,"fonte":"Riachuelo","palavras_chave":["Blusa","Roupa"]}'
 
-Durante a implantação, o backend será configurado para aceitar requisições apenas do domínio oficial do frontend, utilizando políticas de CORS. Isso evita que aplicações externas não autorizadas consumam a API.
+# Registrar entrada de estoque
+curl -X POST "http://localhost/inven/api.php?rota=estoque/1/movimentar" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -d '{"tipo":"entrada","quantidade":5,"observacao":"Compra inicial"}'
 
-### Expiração de Sessão
-Se a API retornar erro de token inválido ou expirado, o frontend deverá:
-1. Limpar o token do `localStorage`.
-2. Redirecionar o usuário para a página de login.
-3. Exibir mensagem informando que a sessão expirou.
-
---- 
+# Excluir material
+curl -X DELETE "http://localhost/inven/api.php?rota=materiais/1" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
