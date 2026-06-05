@@ -1,100 +1,165 @@
-# Sistema de Controle de Estoque  
-## Documento de Requisitos Detalhado
+# Requisitos do Sistema Inven
+
+> **Curso:** Análise e Desenvolvimento de Sistemas · UNIFOR  
+> **Documento:** Requisitos atualizados — Etapa 2  
+> **Referência:** Planejamento original (N705)
 
 ---
 
-## 1. Visão Geral
+## Sumário
 
-Este documento descreve os requisitos funcionais e não funcionais de um sistema de controle de estoque voltado para pequenos e médios empreendedores. O sistema será acessível via web e dispositivos móveis, permitindo gestão eficiente e em tempo real.
-
----
-
-## 2. Objetivos do Sistema
-
-1. Permitir controle completo de estoque  
-2. Reduzir perdas e rupturas  
-3. Automatizar processos manuais  
-4. Fornecer relatórios estratégicos  
-5. Melhorar a tomada de decisão  
+1. [Requisitos Efetivamente Implementados](#1-requisitos-efetivamente-implementados)
+2. [Requisitos Parcialmente Implementados](#2-requisitos-parcialmente-implementados)
+3. [Requisitos Não Implementados](#3-requisitos-não-implementados)
+4. [Justificativas para Mudanças em Relação ao Planejamento Original](#4-justificativas-para-mudanças-em-relação-ao-planejamento-original)
 
 ---
 
-## 3. Público-Alvo
+## 1. Requisitos Efetivamente Implementados
 
-1. Pequenos comerciantes  
-2. Empreendedores individuais  
-3. Lojas físicas e online  
-4. Prestadores de serviço com estoque  
+### RF01 — Cadastro de Usuários
+- **Status:** ✅ Implementado
+- **Descrição:** O sistema permite o cadastro de novos usuários informando nome, e-mail e senha. A senha é armazenada com hash bcrypt. O sistema valida e-mail duplicado, formato de e-mail e tamanho mínimo da senha (6 caracteres).
 
----
+### RF02 — Login e Autenticação
+- **Status:** ✅ Implementado
+- **Descrição:** Autenticação via e-mail e senha com geração de token JWT (validade de 7 dias). O token é armazenado no `localStorage` do navegador e enviado no header `Authorization: Bearer` em todas as requisições protegidas.
 
-## 4. Requisitos Funcionais
+### RF03 — Cadastro de Materiais
+- **Status:** ✅ Implementado
+- **Descrição:** Cadastro completo de materiais com os campos: descrição, preço, fonte/fornecedor, telefone da fonte, e-mail da fonte e palavras-chave (tags). O estoque é iniciado em zero no momento do cadastro.
 
-### 4.1 Usuários
+### RF04 — Edição de Materiais
+- **Status:** ✅ Implementado
+- **Descrição:** Permite editar qualquer campo do material (descrição, preço, fonte, telefone, e-mail e palavras-chave) por meio de modal com os dados pré-preenchidos.
 
-1. Cadastro de usuários  
-2. Login e autenticação segura  
-3. Recuperação de senha  
-4. Controle de acesso por perfil  
+### RF05 — Exclusão de Materiais
+- **Status:** ✅ Implementado
+- **Descrição:** Exclusão de materiais com modal de confirmação. A exclusão em cascata remove automaticamente as palavras-chave e movimentações associadas (garantido por `ON DELETE CASCADE` no banco).
 
-### 4.2 Produtos
+### RF06 — Listagem e Busca de Materiais
+- **Status:** ✅ Implementado
+- **Descrição:** Listagem de todos os materiais do usuário autenticado com busca em tempo real por descrição e fonte. A busca é realizada localmente no frontend para maior agilidade.
 
-1. Cadastro completo de produtos (nome, SKU, preço, categoria)  
-2. Edição e exclusão de produtos  
-3. Upload de imagem  
-4. Controle de quantidade em estoque  
+### RF07 — Controle de Estoque (Entrada e Saída)
+- **Status:** ✅ Implementado
+- **Descrição:** Registro de entradas, saídas e ajustes manuais de estoque. O sistema impede saída maior que o estoque disponível. O estoque é atualizado em tempo real após cada movimentação.
 
-### 4.3 Estoque
+### RF08 — Histórico de Movimentações
+- **Status:** ✅ Implementado
+- **Descrição:** Registro completo de todas as movimentações com data/hora, tipo (entrada/saída/ajuste), quantidade e observação. As últimas 100 movimentações são exibidas em ordem cronológica decrescente.
 
-1. Registro de entrada de produtos  
-2. Registro de saída de produtos  
-3. Atualização automática do estoque  
-4. Ajustes manuais  
-5. Histórico completo de movimentações  
+### RF09 — Dashboard com Indicadores
+- **Status:** ✅ Implementado
+- **Descrição:** Painel inicial com métricas em tempo real: total de materiais cadastrados, total de itens em estoque, valor estimado do estoque e quantidade de itens sem estoque.
 
-### 4.4 Alertas
+### RF10 — Alertas de Estoque Baixo
+- **Status:** ✅ Implementado
+- **Descrição:** Indicadores visuais (badges coloridos) para itens com estoque baixo (≤ 4 unidades, em amarelo) e itens zerados (em vermelho), visíveis nas telas de Materiais e Estoque.
 
-1. Definição de estoque mínimo  
-2. Notificação de estoque baixo  
-3. Alertas via app e WhatsApp  
+### RF11 — Proteção de Rotas
+- **Status:** ✅ Implementado
+- **Descrição:** Todas as rotas de criação, edição, exclusão e consulta de dados são protegidas por validação de JWT no backend. Requisições sem token ou com token inválido recebem erro 401.
 
-### 4.5 Relatórios
+### RNF01 — Interface Responsiva
+- **Status:** ✅ Implementado
+- **Descrição:** Interface adaptável para diferentes tamanhos de tela com CSS responsivo. A sidebar é ocultada em telas menores que 640px.
 
-1. Dashboard com indicadores  
-2. Relatórios exportáveis  
-3. Produtos mais vendidos  
-4. Histórico de movimentações  
+### RNF02 — Segurança de Dados
+- **Status:** ✅ Implementado
+- **Descrição:** Senhas armazenadas com bcrypt, queries com prepared statements (PDO) para prevenção de SQL Injection, autenticação stateless com JWT.
 
----
-
-## 5. Requisitos Não Funcionais
-
-1. Tempo de resposta inferior a 3 segundos  
-2. Interface responsiva (mobile-first)  
-3. Segurança com criptografia de dados  
-4. Alta disponibilidade (99%)  
-5. Escalabilidade para múltiplos usuários  
-
----
-
-## 6. Regras de Negócio
-
-1. Não permitir estoque negativo  
-2. Registrar todas as movimentações  
-3. Evitar produtos com código duplicado  
-4. Gerar alertas automáticos  
+### RNF03 — API REST com JSON
+- **Status:** ✅ Implementado
+- **Descrição:** Toda a comunicação entre frontend e backend ocorre via JSON, com respostas padronizadas contendo `mensagem`/`dados` em sucesso e `erro` em caso de falha.
 
 ---
 
-## 7. Arquitetura (Visão Geral)
+## 2. Requisitos Parcialmente Implementados
 
-O sistema será baseado em arquitetura de APIs REST, com backend em nuvem, banco de dados escalável e frontend responsivo.
+### RF12 — Filtros Avançados de Busca
+- **Status:** ⚠️ Parcialmente implementado
+- **Planejado:** Filtros por material, fonte e palavras-chave via query params na API (`?material=`, `?fonte=`, `?palavra=`).
+- **Implementado:** Busca unificada no frontend por descrição e fonte. O filtro por palavras-chave e os filtros via query params na API foram implementados no backend mas não expostos na interface.
+- **Justificativa:** Priorizou-se a simplicidade da interface para o público-alvo (pequenos empreendedores com baixa familiaridade tecnológica). A busca unificada atende a maioria dos casos de uso.
+
+### RF13 — Palavras-chave (Tags)
+- **Status:** ⚠️ Parcialmente implementado
+- **Planejado:** Cadastro e busca de materiais por palavras-chave.
+- **Implementado:** Cadastro e exibição das palavras-chave funcionam corretamente. A busca por palavras-chave está implementada no backend mas não na interface do frontend.
+- **Justificativa:** Mesma razão do RF12 — simplificação da interface.
+
+### RNF04 — Tempo de Resposta
+- **Status:** ⚠️ Parcialmente implementado
+- **Planejado:** Tempo de resposta inferior a 3 segundos.
+- **Implementado:** Atendido em ambiente local (XAMPP). Não foi realizado teste em ambiente de produção ou com carga simultânea de múltiplos usuários.
 
 ---
 
-## 8. Conclusão
+## 3. Requisitos Não Implementados
 
-O sistema proposto possui alto potencial de mercado e pode ser evoluído para um SaaS robusto, com funcionalidades avançadas e integração com outros sistemas.
+### RF14 — Recuperação de Senha
+- **Status:** ❌ Não implementado
+- **Planejado:** Envio de e-mail para recuperação de senha.
+- **Justificativa:** Requer configuração de servidor SMTP, o que está fora do escopo do ambiente de desenvolvimento local (XAMPP). Previsto para versão futura.
 
+### RF15 — Upload de Imagem do Produto
+- **Status:** ❌ Não implementado
+- **Planejado:** Possibilidade de associar imagem ao material.
+- **Justificativa:** Aumentaria a complexidade do backend e do banco de dados consideravelmente. Priorizado o controle de estoque, que é o núcleo da aplicação.
 
-Como pequeno comerciante, eu quero registrar a entrada e saída de produtos para não ter furos no estoque
+### RF16 — Relatórios Exportáveis
+- **Status:** ❌ Não implementado
+- **Planejado:** Exportação de relatórios em PDF ou CSV.
+- **Justificativa:** Requer bibliotecas adicionais e está além do escopo desta etapa.
+
+### RF17 — Alertas via WhatsApp / Notificações Push
+- **Status:** ❌ Não implementado
+- **Planejado:** Alertas de estoque mínimo via app e WhatsApp.
+- **Justificativa:** Requer integração com API externa (ex: Twilio) e infraestrutura de servidor em produção, fora do escopo desta etapa.
+
+### RF18 — Controle de Acesso por Perfil
+- **Status:** ❌ Não implementado
+- **Planejado:** Múltiplos perfis de usuário com permissões diferentes.
+- **Justificativa:** O público-alvo atual (empreendedores individuais) não necessita de múltiplos perfis. Simplificação consciente de escopo.
+
+### RNF05 — Alta Disponibilidade (99%)
+- **Status:** ❌ Não implementado
+- **Planejado:** Disponibilidade de 99% com deploy em nuvem.
+- **Justificativa:** O sistema opera em ambiente local (XAMPP) nesta etapa. Deploy em produção previsto para versão futura.
+
+---
+
+## 4. Justificativas para Mudanças em Relação ao Planejamento Original
+
+### 4.1 Simplificação da Arquitetura
+
+**Planejado:** Arquitetura MVC com Laravel, múltiplos arquivos organizados em Controllers, Models, Middleware, Utils e Routes separados.
+
+**Implementado:** PHP puro em arquivo único (`api.php`) com frontend em HTML/CSS/JS em arquivo único (`index.html`).
+
+**Justificativa:** Durante a etapa de implementação, a arquitetura MVC completa com Laravel gerou problemas de compatibilidade com o ambiente de desenvolvimento do XAMPP (conflitos de roteamento, configuração do `.htaccess`, versão do PHP). A decisão de simplificar para arquivos únicos garantiu que o sistema funcionasse de forma confiável no ambiente disponível para a equipe, sem perda das funcionalidades principais planejadas.
+
+### 4.2 Mudança no Sistema de Roteamento
+
+**Planejado:** Roteamento via `REQUEST_URI` com reescrita por `.htaccess` (padrão Laravel/RESTful puro).
+
+**Implementado:** Roteamento via query string (`?rota=`) combinado com leitura da `REQUEST_URI`.
+
+**Justificativa:** O Apache do XAMPP no Windows apresentou comportamento inconsistente com `mod_rewrite` para subdiretórios, repassando a URI completa com o prefixo da pasta. A query string garante compatibilidade independente da configuração do servidor.
+
+### 4.3 Remoção Temporária de Funcionalidades Secundárias
+
+**Planejado:** Recuperação de senha, upload de imagem, relatórios exportáveis, alertas via WhatsApp.
+
+**Implementado:** Funcionalidades removidas desta etapa.
+
+**Justificativa:** Priorizou-se a entrega das funcionalidades essenciais (CRUD de materiais, controle de estoque, autenticação segura e histórico de movimentações) com qualidade e estabilidade, em detrimento de funcionalidades secundárias que exigiriam infraestrutura adicional não disponível no ambiente de desenvolvimento.
+
+### 4.4 Banco de Dados Simplificado
+
+**Planejado:** 6 entidades (USUARIO, MATERIAIS, FONTE, PRECO, MOVI_MATE, ESTO_MATE) com modelo normalizado.
+
+**Implementado:** 4 tabelas (`usuarios`, `materiais`, `palavras_chave`, `movimentacoes`) com preço e estoque embutidos na tabela de materiais.
+
+**Justificativa:** A desnormalização parcial (preço e estoque direto na tabela de materiais) simplificou as queries e o código do backend sem comprometer a integridade dos dados para o escopo atual, já que o sistema gerencia apenas o preço atual (não histórico de preços) de cada material.
