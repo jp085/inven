@@ -1,7 +1,7 @@
 # Identificação do Público-Alvo — Inven
 
-> **Documento:** Perfil do público-alvo e contexto social  
-> **Projeto:** Inven — Sistema de Controle de Estoque  
+> **Documento:** Perfil do público-alvo e contexto social
+> **Projeto:** Inven — Sistema de Controle de Estoque
 > **Curso:** Análise e Desenvolvimento de Sistemas · UNIFOR
 
 ---
@@ -10,23 +10,33 @@
 
 O sistema Inven é direcionado a **pequenos e médios empreendedores** que comercializam produtos físicos e enfrentam dificuldades no controle manual do estoque.
 
-### Perfis prioritários
+### Empreendedora validada
+
+| Campo | Informação |
+|---|---|
+| **Nome** | Marta Elena Silva de Sousa |
+| **CNPJ** | 18.471.321/0001-30 |
+| **Tipo de negócio** | Comércio de roupas, acessórios e artigos diversos |
+| **Porte** | Microempreendedora Individual (MEI) |
+| **Localização** | Fortaleza, Ceará |
+| **Forma de gestão anterior** | Manual — sem sistema de controle de estoque |
+
+### Perfis prioritários atendidos pelo sistema
 
 | Perfil | Descrição |
 |---|---|
 | Revendedores informais | Pessoas que compram produtos para revender (roupas, acessórios, cosméticos) sem ter loja física |
 | Feirantes | Comerciantes que atuam em feiras livres com estoque variado e rotatividade alta |
-| Costureiras e artesãs | Profissionais que trabalham com materiais (tecidos, linhas, aviamentos) e precisam controlar insumos |
+| Costureiras e artesãs | Profissionais que trabalham com materiais e precisam controlar insumos |
 | Lojistas de pequeno porte | Proprietários de lojas físicas com pouco ou nenhum sistema de gestão |
-| Prestadores de serviço com estoque | Profissionais como técnicos, instaladores ou esteticistas que utilizam materiais e precisam controlá-los |
 
 ### Características do perfil
 
-- **Faixa etária:** 20 a 55 anos
+- **Faixa etária:** 20 a 60 anos
 - **Nível de escolaridade:** Fundamental completo ao superior incompleto
 - **Familiaridade com tecnologia:** Baixa a moderada — uso cotidiano de smartphone e WhatsApp, pouca experiência com sistemas de gestão
 - **Dispositivos utilizados:** Principalmente smartphone; acesso eventual a computador
-- **Volume de estoque:** Pequeno a médio (10 a 200 itens diferentes)
+- **Volume de estoque:** Pequeno a médio (dezenas a centenas de itens diferentes)
 - **Regime de trabalho:** Autônomos, MEIs ou microempresas familiares
 
 ---
@@ -35,7 +45,7 @@ O sistema Inven é direcionado a **pequenos e médios empreendedores** que comer
 
 ### Cenário econômico
 
-O empreendedorismo de pequeno porte é uma realidade significativa no Brasil, especialmente no Nordeste. Segundo o SEBRAE, o estado do Ceará possui mais de 800 mil microempreendedores individuais (MEIs) registrados, dos quais grande parte atua no comércio de produtos físicos sem nenhuma ferramenta digital de gestão.
+O empreendedorismo de pequeno porte é uma realidade significativa no Brasil, especialmente no Nordeste. O estado do Ceará possui centenas de milhares de microempreendedores individuais (MEIs) registrados, dos quais grande parte atua no comércio de produtos físicos sem nenhuma ferramenta digital de gestão.
 
 Esses empreendedores enfrentam desafios como:
 
@@ -58,13 +68,11 @@ O Inven busca endereçar esses desafios ao oferecer uma ferramenta gratuita, sim
 
 ## 3. Localização
 
-O projeto foi desenvolvido no contexto do Ceará, com foco inicial na cidade de **Fortaleza** e região metropolitana, onde a equipe tem acesso ao público-alvo para validação.
-
 | Aspecto | Detalhe |
 |---|---|
 | Estado | Ceará |
-| Município principal | Fortaleza |
-| Contexto de aplicação | Feiras livres, comércio informal, revendedoras de bairro |
+| Município | Fortaleza |
+| Contexto de aplicação | Comércio de bairro, loja de roupas e artigos diversos |
 | Abrangência potencial | Nacional (sistema web acessível de qualquer localidade) |
 
 ---
@@ -73,14 +81,11 @@ O projeto foi desenvolvido no contexto do Ceará, com foco inicial na cidade de 
 
 ### Problema central
 
-Pequenos empreendedores **não sabem ao certo quanto têm em estoque**, o que gera dois problemas simultâneos:
+A empreendedora Marta Elena, assim como a maioria dos pequenos comerciantes, **não possuía nenhum sistema digital de controle de estoque**. O gerenciamento era feito de forma intuitiva, sem registros formais de entradas, saídas ou histórico de movimentações.
 
-1. **Ruptura de estoque:** Ficam sem produtos para vender, perdendo clientes e receita
-2. **Excesso de estoque:** Compram mais do que precisam, imobilizando capital desnecessariamente
+Sua loja comercializa roupas femininas, acessórios, artigos de papelaria e produtos diversos — um mix variado que torna o controle manual ainda mais desafiador.
 
 ### Necessidades identificadas
-
-A partir do levantamento de requisitos e do contexto observado, identificamos as seguintes necessidades do público-alvo:
 
 | Necessidade | Frequência | Prioridade |
 |---|---|---|
@@ -91,7 +96,6 @@ A partir do levantamento de requisitos e do contexto observado, identificamos as
 | Saber de qual fornecedor comprou cada produto | Ocasional | Média |
 | Ver o histórico de entradas e saídas | Mensal | Média |
 | Calcular o valor total do estoque | Mensal | Média |
-| Gerar relatórios ou exportar dados | Ocasional | Baixa |
 
 ### Solução proposta
 
