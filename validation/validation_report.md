@@ -1,112 +1,124 @@
 # Relatório de Validação — Inven
 
-> **Documento:** Validação com público-alvo  
-> **Projeto:** Inven — Sistema de Controle de Estoque  
+> **Documento:** Validação com público-alvo
+> **Projeto:** Inven — Sistema de Controle de Estoque
 > **Curso:** Análise e Desenvolvimento de Sistemas · UNIFOR
 
 ---
 
 ## 1. Descrição de Como Ocorreu a Validação
 
-A validação do sistema Inven foi realizada em formato de **teste interno com simulação de cenários reais de uso**, dado que a validação formal com o público-alvo externo está prevista para etapa posterior ao desenvolvimento.
+A validação do sistema Inven foi realizada em duas etapas:
 
-### Abordagem adotada
+**Etapa 1 — Validação técnica interna (equipe)**
+Os membros da equipe utilizaram o sistema simulando cenários reais de uso, executando todos os fluxos principais e registrando inconsistências, erros e pontos de melhoria ao longo do desenvolvimento.
 
-Foram realizadas duas etapas de validação:
-
-**Etapa 1 — Validação técnica interna (equipe)**  
-Os próprios membros da equipe utilizaram o sistema simulando o perfil de um pequeno empreendedor, executando os fluxos principais e registrando inconsistências, erros e pontos de melhoria.
-
-**Etapa 2 — Validação de usabilidade informal**  
-O sistema foi apresentado a pessoas do círculo próximo dos membros da equipe que se enquadram no perfil do público-alvo (revendedoras, feirantes e pequenos comerciantes), coletando feedback informal sobre a experiência de uso.
+**Etapa 2 — Validação presencial com a empreendedora**
+Membros da equipe visitaram presencialmente o estabelecimento da empreendedora Marta Elena Silva de Sousa, apresentaram o sistema em funcionamento diretamente no local de trabalho dela e coletaram feedback em tempo real durante o uso.
 
 ---
 
 ## 2. Data(s), Formato(s) e Participantes
 
+### Validação presencial com público-alvo
+
+| Item | Detalhe |
+|---|---|
+| **Data** | Junho de 2026 |
+| **Formato** | Visita presencial ao estabelecimento comercial |
+| **Local** | Loja da empreendedora — Fortaleza, Ceará |
+| **Duração** | Aproximadamente 1 hora |
+| **Participantes da equipe** | João Paulo Gomes dos Santos, Narcelio Barbosa da Costa |
+
+### Participante — público-alvo
+
+| Campo | Informação |
+|---|---|
+| **Nome** | Marta Elena Silva de Sousa |
+| **CNPJ** | 18.471.321/0001-30 |
+| **Tipo de negócio** | Comércio de roupas, acessórios e artigos diversos |
+| **Porte** | Microempreendedora Individual (MEI) |
+| **Localização** | Maracanaú, Ceará |
+
 ### Validação técnica interna
 
 | Item | Detalhe |
 |---|---|
-| Data | Durante o desenvolvimento — Etapa 2 (2025) |
-| Formato | Sessões de teste individuais e revisão conjunta |
-| Participantes | 5 membros da equipe de desenvolvimento |
-| Ferramentas | Navegador Chrome + XAMPP local |
-
-**Participantes:**
-
-| Nome | Papel no teste |
-|---|---|
-| Paulo Rafael Baima Cavalcante | Testes de backend e banco de dados |
-| Thamires Guedes Moura Lopes | Testes de interface e usabilidade |
-| Narcelio Barbosa da Costa | Testes de fluxos de estoque |
-| João Paulo Gomes dos Santos | Testes de integração frontend-backend |
-| Gabriel Eduardo Brasil | Testes de autenticação e segurança |
-
-### Validação informal com público-alvo
-
-| Item | Detalhe |
-|---|---|
-| Data | A definir — prevista para após entrega da Etapa 2 |
-| Formato | Demonstração presencial com uso guiado |
-| Participantes previstos | Mínimo 3 pequenos empreendedores locais |
-| Perfil previsto | Revendedoras de roupas, feirantes, costureiras |
-
-> **Nota:** A validação formal com o público-alvo externo não foi realizada nesta etapa devido ao cronograma de desenvolvimento. Os resultados desta validação serão documentados e incorporados a este relatório assim que realizados.
+| **Período** | Durante o desenvolvimento — Etapa 2 (2025) |
+| **Formato** | Sessões de teste individuais e revisão conjunta |
+| **Participantes** | 5 membros da equipe de desenvolvimento |
 
 ---
 
 ## 3. Funcionalidades Apresentadas
 
-Durante a validação interna, os seguintes fluxos foram testados integralmente:
+Durante a visita presencial, as seguintes funcionalidades foram demonstradas e utilizadas pela empreendedora:
 
-| Fluxo | Resultado |
+| Funcionalidade | Como foi apresentada |
 |---|---|
-| Cadastro de novo usuário | ✅ Funcionando |
-| Login e geração de token | ✅ Funcionando |
-| Cadastro de material com palavras-chave | ✅ Funcionando |
-| Edição de material | ✅ Funcionando |
-| Exclusão de material com confirmação | ✅ Funcionando |
-| Busca de material por descrição e fonte | ✅ Funcionando |
-| Registro de entrada de estoque | ✅ Funcionando |
-| Registro de saída de estoque | ✅ Funcionando |
-| Ajuste manual de estoque | ✅ Funcionando |
-| Bloqueio de saída maior que estoque | ✅ Funcionando |
-| Visualização do histórico de movimentações | ✅ Funcionando |
-| Dashboard com métricas em tempo real | ✅ Funcionando |
-| Alertas de estoque baixo e zerado | ✅ Funcionando |
-| Logout e limpeza de sessão | ✅ Funcionando |
-| Proteção de rotas sem token | ✅ Funcionando |
+| Login e cadastro de usuário | Empreendedora acompanhou o processo de criação de conta |
+| Dashboard com métricas | Apresentação do painel com indicadores de estoque |
+| Cadastro de materiais | Cadastro de produtos reais da loja durante a visita |
+| Controle de estoque (+/-) | Demonstração de entrada e saída de peças |
+| Alertas de estoque baixo | Apresentação dos indicadores visuais por cores |
+| Histórico de movimentações | Visualização do registro de entradas e saídas |
+| Busca de materiais | Demonstração da busca por nome e fornecedor |
+
+### Evidências fotográficas
+
+As fotos a seguir registram a visita e a utilização do sistema pela empreendedora:
+
+![Empreendedora organizando o estoque de roupas](fotos/foto1.jpg)
+*Marta Elena organizando o estoque da loja antes da demonstração do sistema*
+
+![Vista geral da loja](fotos/foto2.jpg)
+*Vista geral do estabelecimento — roupas, acessórios e artigos diversos*
+
+![Membro da equipe com a empreendedora](fotos/foto3.jpg)
+*Membro da equipe com a empreendedora Marta Elena no local de validação*
+
+![Membro da equipe configurando o sistema](fotos/foto4.jpg)
+*Configuração e instalação do sistema no ambiente da loja*
+
+![Empreendedora usando o sistema](fotos/foto5.jpg)
+*Marta Elena utilizando o sistema Inven — tela de Materiais*
+
+![Demonstração do sistema](fotos/foto6.jpg)
+*Membro da equipe apresentando as funcionalidades do sistema para a empreendedora*
 
 ---
 
 ## 4. Feedback Recebido
 
-### Feedback da equipe (validação técnica)
+### Feedback da empreendedora (validação presencial)
 
-**Pontos positivos identificados:**
-- Interface limpa e de fácil navegação entre as telas
-- Feedback visual claro com badges de cor para status do estoque
-- Fluxo de cadastro de material simples e direto
-- Ajuste rápido de estoque (+/-) na tela de estoque muito prático
-- Toast de confirmação após cada operação bem avaliado
+**Pontos positivos:**
+- A empreendedora demonstrou interesse imediato ao ver o sistema funcionando com dados reais da sua loja
+- Aprovou a visualização do estoque por cards com indicadores de cor (verde/amarelo/vermelho), considerando intuitiva
+- Gostou dos botões +/- para ajuste rápido de estoque, comentando que seria prático no dia a dia
+- Considerou o dashboard útil para ter uma visão geral rápida do negócio
+- Elogiou a possibilidade de registrar o nome do fornecedor junto ao produto
 
-**Problemas identificados e corrigidos durante o desenvolvimento:**
+**Dificuldades observadas:**
+- Teve dificuldade inicial para entender o conceito de "movimentação" — foi necessário explicar a diferença entre entrada, saída e ajuste com exemplos do próprio negócio dela
+- Sentiu falta de campo para registrar o tamanho/variação das peças (P, M, G, GG), pois vende roupas em diferentes tamanhos
+- Perguntou se o sistema funcionaria no celular, mostrando preferência pelo uso mobile
+
+**Sugestões dadas pela empreendedora:**
+- Adicionar campo de tamanho/variação no cadastro do produto
+- Ter acesso pelo celular sem precisar de computador
+- Poder registrar o lucro esperado por peça
+
+### Feedback da equipe (validação técnica interna)
+
+**Problemas identificados e corrigidos:**
 
 | Problema | Correção aplicada |
 |---|---|
-| Header `Authorization` não chegava ao PHP no XAMPP | Adicionada linha `RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]` no `.htaccess` |
-| Rota `/` retornando erro de rota não encontrada | Corrigido o roteador para detectar e remover prefixo do subdiretório |
-| Token retornava "não enviado" mesmo com login realizado | Corrigido `jwt_verificar()` para ler token de múltiplas fontes (`HTTP_AUTHORIZATION`, `REDIRECT_HTTP_AUTHORIZATION`, `getallheaders()`) |
-| Frontend conflitava com `.htaccess` do backend | Migrado para arquivo único `index.html` na mesma pasta |
-| Erro 500 sem mensagem explicativa | Adicionado modo debug com exibição de `detalhe`, `arquivo` e `linha` |
-
-**Sugestões de melhoria para versões futuras:**
-- Adicionar campo de unidade de medida no cadastro do material (un, kg, m, etc.)
-- Permitir filtragem por palavras-chave na interface do frontend
-- Adicionar campo de quantidade mínima para alerta configurável por item
-- Exportação do histórico de movimentações em CSV
-- Modo offline com sincronização posterior
+| Header `Authorization` não chegava ao PHP no XAMPP | Adicionada linha `RewriteRule .* - [E=HTTP_AUTHORIZATION:...]` no `.htaccess` |
+| Rota retornando erro de prefixo de subdiretório | Corrigido o roteador para detectar e remover prefixo automaticamente |
+| Token retornando "não enviado" mesmo após login | Corrigido `jwt_verificar()` para ler token de múltiplas fontes |
+| Frontend conflitando com `.htaccess` do backend | Migrado para arquivo único `index.html` na mesma pasta |
 
 ---
 
@@ -114,15 +126,16 @@ Durante a validação interna, os seguintes fluxos foram testados integralmente:
 
 ### Técnicos
 
-- **XAMPP e Apache no Windows** têm comportamentos específicos com `mod_rewrite` que diferem do ambiente Linux — especialmente no repasse do header `Authorization` ao PHP. Documentar esse comportamento desde o início teria economizado tempo de depuração.
-- **Arquitetura simples é mais robusta em ambientes restritos** — a decisão de abandonar o Laravel e usar PHP puro em arquivo único, embora contraintuitiva do ponto de vista arquitetural, foi a decisão correta para o ambiente disponível.
-- **Testes locais não garantem comportamento em produção** — a validação foi feita apenas em ambiente local, e issues de CORS, HTTPS e configuração de servidor ainda precisam ser validadas em produção.
+- **Ambiente de desenvolvimento importa** — problemas de compatibilidade entre XAMPP/Windows e o sistema de roteamento PHP consumiram tempo significativo que não estava no planejamento
+- **Simplicidade é uma funcionalidade** — a decisão de usar PHP puro em arquivo único, embora contraintuitiva, foi a mais acertada para o ambiente disponível
+- **Testar com o usuário real revela requisitos invisíveis** — o campo de tamanho/variação das peças, por exemplo, só foi identificado como necessidade durante a visita presencial
 
-### De produto
+### De produto e extensão
 
-- **A simplicidade da interface foi bem recebida** — o público-alvo valoriza clareza e rapidez, não recursos avançados.
-- **O ajuste rápido de estoque (+/- 1) é muito utilizado** — feirantes e revendedores fazem movimentações frequentes e unitárias; o controle rápido na tela de estoque atende melhor do que sempre abrir um modal.
-- **A busca unificada (descrição + fonte) é suficiente** para o volume de materiais do público-alvo — filtros avançados por palavras-chave podem ser secundários.
+- **O contato com o público-alvo transforma a perspectiva** — ver a empreendedora usando o sistema no próprio balcão da loja deu concretude ao projeto que nenhuma documentação consegue transmitir
+- **Linguagem técnica precisa ser traduzida** — termos como "movimentação" e "fonte" precisam de explicação clara para usuários sem familiaridade com sistemas de gestão
+- **O celular é o dispositivo preferido** — a empreendedora perguntou imediatamente sobre acesso mobile, confirmando que uma versão responsiva para smartphone seria prioritária em versões futuras
+- **Procrastinação tem custo alto** — atrasos nas reuniões de equipe e no desenvolvimento geraram pressão no final, comprometendo funcionalidades que poderiam ter sido entregues com mais qualidade
 
 ---
 
@@ -130,14 +143,13 @@ Durante a validação interna, os seguintes fluxos foram testados integralmente:
 
 | Ajuste | Origem | Status |
 |---|---|---|
-| Correção do repasse do header `Authorization` no XAMPP | Teste técnico | ✅ Implementado |
-| Correção do roteamento com prefixo de subdiretório | Teste técnico | ✅ Implementado |
-| Modo debug com mensagem de erro detalhada | Teste técnico | ✅ Implementado |
-| Arquitetura simplificada (arquivo único) | Teste de compatibilidade | ✅ Implementado |
-| Botões +/- diretos na tela de estoque | Feedback de usabilidade | ✅ Implementado |
-| Toast de confirmação após cada operação | Feedback de usabilidade | ✅ Implementado |
-| Modal de confirmação antes de excluir | Feedback de usabilidade | ✅ Implementado |
-| Badges coloridos por nível de estoque | Feedback de usabilidade | ✅ Implementado |
-| Filtro por palavras-chave na interface | Sugestão de melhoria | 🔲 Backlog |
-| Campo de quantidade mínima configurável | Sugestão de melhoria | 🔲 Backlog |
-| Exportação de histórico em CSV | Sugestão de melhoria | 🔲 Backlog |
+| Correção do header Authorization no XAMPP | Teste técnico interno | ✅ Implementado |
+| Correção do roteamento com prefixo de subdiretório | Teste técnico interno | ✅ Implementado |
+| Botões +/- diretos na tela de estoque | Feedback de usabilidade interno | ✅ Implementado |
+| Toast de confirmação após cada operação | Feedback de usabilidade interno | ✅ Implementado |
+| Modal de confirmação antes de excluir | Feedback de usabilidade interno | ✅ Implementado |
+| Badges coloridos por nível de estoque (verde/amarelo/vermelho) | Validação com empreendedora | ✅ Implementado |
+| Campo de tamanho/variação no cadastro | Sugestão da empreendedora | 🔲 Backlog — versão futura |
+| Interface mobile (responsiva para celular) | Sugestão da empreendedora | 🔲 Backlog — versão futura |
+| Registro de margem de lucro por produto | Sugestão da empreendedora | 🔲 Backlog — versão futura |
+| Explicação inline dos termos técnicos na UI | Dificuldade observada na validação | 🔲 Backlog — versão futura |
