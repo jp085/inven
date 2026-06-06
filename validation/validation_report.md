@@ -39,12 +39,13 @@ Membros da equipe visitaram presencialmente o estabelecimento da empreendedora M
 | **Tipo de negócio** | Comércio de roupas, acessórios e artigos diversos |
 | **Porte** | Microempreendedora Individual (MEI) |
 | **Localização** | Maracanaú, Ceará |
+|**Contato**| 85986655373 |
 
 ### Validação técnica interna
 
 | Item | Detalhe |
 |---|---|
-| **Período** | Durante o desenvolvimento — Etapa 2 (2025) |
+| **Período** | Durante o desenvolvimento — Etapa 2 (2026) |
 | **Formato** | Sessões de teste individuais e revisão conjunta |
 | **Participantes** | 5 membros da equipe de desenvolvimento |
 
