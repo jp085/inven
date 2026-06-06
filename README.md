@@ -217,6 +217,7 @@ A validação formal com o público-alvo (pequenos empreendedores) está previst
 | 2317792 | Narcelio Barbosa da Costa | Banco de Dados / Documentação |
 | 2323778 | João Paulo Gomes dos Santos | Frontend / Integração API |
 | 2124682 | Gabriel Eduardo Brasil | Arquitetura / Testes |
+| 2418803  | Marcos Aurélio Sousa de Carvalho | Backend PHP / Banco de dados |
 
 ---
 
