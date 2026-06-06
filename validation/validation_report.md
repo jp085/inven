@@ -68,22 +68,22 @@ Durante a visita presencial, as seguintes funcionalidades foram demonstradas e u
 
 As fotos a seguir registram a visita e a utilização do sistema pela empreendedora:
 
-![Empreendedora organizando o estoque de roupas](validation/evidence/foto1.jpg)
+![Empreendedora organizando o estoque de roupas](evidence/foto1.jpg)
 *Marta Elena organizando o estoque da loja antes da demonstração do sistema*
 
-![Vista geral da loja](validation/evidence/foto2.jpg)
+![Vista geral da loja](evidence/foto2.jpg)
 *Vista geral do estabelecimento — roupas, acessórios e artigos diversos*
 
-![Membro da equipe com a empreendedora](validation/evidence/foto3.jpg)
+![Membro da equipe com a empreendedora](evidence/foto3.jpg)
 *Membro da equipe com a empreendedora Marta Elena no local de validação*
 
-![Membro da equipe configurando o sistema](validation/evidence/foto4.jpg)
+![Membro da equipe configurando o sistema](evidence/foto4.jpg)
 *Configuração e instalação do sistema no ambiente da loja*
 
-![Empreendedora usando o sistema](validation/evidence/foto5.jpg)
+![Empreendedora usando o sistema](evidence/foto5.jpg)
 *Marta Elena utilizando o sistema Inven — tela de Materiais*
 
-![Demonstração do sistema](validation/evidence/foto6.jpg)
+![Demonstração do sistema](evidence/foto6.jpg)
 *Membro da equipe apresentando as funcionalidades do sistema para a empreendedora*
 
 ---
