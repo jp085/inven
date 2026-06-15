@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inven</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0f12;
+      --bg2:     #141720;
+      --bg3:     #1c2030;
+      --border:  #2a2f45;
+      --text1:   #f0f2f8;
+      --text2:   #9aa0bc;
+      --text3:   #5c637a;
+      --blue:    #4f8ef7;
+      --green:   #34d399;
+      --red:     #f87171;
+      --yellow:  #fbbf24;
+    }
+
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text1); font-size: 15px; }
+
+    /* ---- UTILITÁRIOS ---- */
+    .hidden  { display: none !important; }
+    .flex    { display: flex; align-items: center; gap: 10px; }
+    .mt      { margin-top: 14px; }
+
+    /* ---- AUTH ---- */
+    #tela-auth {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .auth-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px;
+      width: 100%; max-width: 400px;
+    }
+    .logo { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .logo span { color: var(--blue); }
+    .subtitulo { color: var(--text3); font-size: 14px; margin-bottom: 28px; }
+
+    /* ---- FORMULÁRIOS ---- */
+    label  { display: block; font-size: 13px; color: var(--text2); margin-bottom: 5px; }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text1);
+      font-size: 14px;
+      padding: 10px 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); }
+    input::placeholder { color: var(--text3); }
+    textarea { resize: vertical; min-height: 70px; }
+    .form-grupo { margin-bottom: 16px; }
+    .form-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ---- BOTÕES ---- */
+    button {
+      cursor: pointer; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 500; font-family: inherit;
+      padding: 10px 18px; transition: opacity .15s;
+    }
+    button:hover { opacity: .85; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-primary   { background: var(--blue);  color: #fff; }
+    .btn-secondary { background: var(--bg3);   color: var(--text1); border: 1px solid var(--border); }
+    .btn-danger    { background: transparent;  color: var(--red);   border: 1px solid var(--red); }
+    .btn-block     { width: 100%; }
+    .btn-sm        { padding: 6px 12px; font-size: 13px; }
+
+    /* ---- ALERTA ---- */
+    .alerta {
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 13px; margin-bottom: 14px;
+      display: none;
+    }
+    .alerta-erro    { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); color: var(--red); }
+    .alerta-sucesso { background: rgba(52,211,153,.1);  border: 1px solid rgba(52,211,153,.3);  color: var(--green); }
+    .alerta.ativo   { display: block; }
+
+    /* ---- LAYOUT PRINCIPAL ---- */
+    #tela-app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-logo { padding: 0 20px 20px; font-size: 20px; font-weight: 700; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+    .sidebar-logo span { color: var(--blue); }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; width: 100%; text-align: left;
+      background: none; border: none; color: var(--text2);
+      font-size: 14px; border-radius: 0;
+    }
+    .nav-btn:hover { background: var(--bg3); color: var(--text1); opacity: 1; }
+    .nav-btn.ativo { background: var(--bg3); color: var(--text1); border-left: 3px solid var(--blue); }
+
+    .sidebar-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+    .usuario-info { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+    .usuario-nome { font-weight: 600; color: var(--text2); }
+
+    .conteudo { flex: 1; padding: 32px; overflow-y: auto; }
+    .pagina   { display: none; }
+    .pagina.ativa { display: block; }
+
+    /* ---- CABEÇALHO DE PÁGINA ---- */
+    .pag-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .pag-titulo { font-size: 22px; font-weight: 600; }
+
+    /* ---- MÉTRICAS ---- */
+    .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .metrica-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .metrica-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 6px; }
+    .metrica-valor { font-size: 28px; font-weight: 600; }
+
+    /* ---- TABELA ---- */
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg3); }
+    td { padding: 12px 16px; font-size: 14px; color: var(--text2); vertical-align: middle; }
+    td.destaque { color: var(--text1); font-weight: 500; }
+
+    /* ---- BADGE ---- */
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+    .badge-verde    { background: rgba(52,211,153,.12);  color: var(--green); }
+    .badge-vermelho { background: rgba(248,113,113,.12); color: var(--red); }
+    .badge-amarelo  { background: rgba(251,191,36,.12);  color: var(--yellow); }
+
+    /* ---- MODAL ---- */
+    .modal-fundo {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .modal-fundo.aberto { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 14px; width: 100%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+    .modal-titulo { font-size: 16px; font-weight: 600; }
+    .modal-body   { padding: 22px; }
+    .modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+    /* ---- BUSCA ---- */
+    .busca-wrap { position: relative; }
+    .busca-wrap input { padding-left: 36px; }
+    .busca-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 16px; pointer-events: none; }
+
+    /* ---- TOAST ---- */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 18px;
+      font-size: 14px; z-index: 999;
+      transform: translateY(20px); opacity: 0;
+      transition: all .25s; max-width: 320px;
+    }
+    #toast.visivel { transform: translateY(0); opacity: 1; }
+
+    /* ---- ESTADO VAZIO ---- */
+    .vazio { padding: 50px 20px; text-align: center; color: var(--text3); font-size: 14px; }
+
+    /* ---- LINK ---- */
+    .link { color: var(--blue); cursor: pointer; font-size: 13px; }
+    .link:hover { text-decoration: underline; }
+
+    /* ---- CONTROLES DE ESTOQUE ---- */
+    .estoque-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .estoque-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px;
+    }
+    .estoque-card.baixo  { border-color: rgba(251,191,36,.3); }
+    .estoque-card.zerado { border-color: rgba(248,113,113,.3); }
+    .est-nome  { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+    .est-fonte { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+    .qty-ctrl  { display: flex; align-items: center; gap: 10px; }
+    .qty-btn   { width: 34px; height: 34px; font-size: 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); color: var(--text1); display: flex; align-items: center; justify-content: center; }
+    .qty-num   { font-size: 26px; font-weight: 700; min-width: 50px; text-align: center; }
+
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .conteudo { padding: 20px; }
+      .form-linha { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     TELA DE AUTENTICAÇÃO
+     ============================================================ -->
+<div id="tela-auth">
+  <div class="auth-box">
+    <div class="logo">Inven<span>.</span></div>
+    <p class="subtitulo">Controle de estoque para empreendedores</p>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div id="erro-login" class="alerta alerta-erro"></div>
+      <div class="form-grupo">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-grupo">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••">
+      </div>
+      <button class="btn-primary btn-block mt" onclick="fazerLogin()">Entrar</button>
+      <p class="mt" style="text-align:center; font-size:13px; color:var(--text3)">
+        Não tem conta? <span class="link" onclick="mostrarCadastro()">Criar conta</span>
+      </p>
+    </div>
+
+    <!-- CADASTRO -->
+    <div id="form-cadastro" class="hidden">
+      <div id="erro-cadastro" class="alerta alerta-erro"></div>
+      <div class="form-grupo">
+        <label>Nome completo</label>
+        <input type="text" id="cad-nome" placeholder="Seu nome">
+      </div>
+      <div class="form-grupo">
+        <label>E-mail</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-grupo">
+        <label>Senha (mínimo 6 caracteres)</label>
+        <input type="password" id="cad-senha" placeholder="••••••••">
+      </div>
+      <button class="btn-primary btn-block mt" onclick="fazerCadastro()">Criar conta</button>
+      <p class="mt" style="text-align:center; font-size:13px; color:var(--text3)">
+        Já tem conta? <span class="link" onclick="mostrarLogin()">Entrar</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA PRINCIPAL DO APP
+     ============================================================ -->
+<div id="tela-app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">Inven<span>.</span></div>
+    <button class="nav-btn ativo" id="nav-dashboard"    onclick="irPara('dashboard')">📊 Dashboard</button>
+    <button class="nav-btn"       id="nav-materiais"    onclick="irPara('materiais')">📦 Materiais</button>
+    <button class="nav-btn"       id="nav-estoque"      onclick="irPara('estoque')">🗂 Estoque</button>
+    <button class="nav-btn"       id="nav-movimentacoes" onclick="irPara('movimentacoes')">↕ Movimentações</button>
+    <div class="sidebar-bottom">
+      <div class="usuario-info">Logado como<br><span class="usuario-nome" id="sidebar-nome"></span></div>
+      <button class="btn-secondary btn-block btn-sm" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div class="conteudo">
+
+    <!-- DASHBOARD -->
+    <div class="pagina ativa" id="pag-dashboard">
+      <div class="pag-header">
+        <h1 class="pag-titulo">Dashboard</h1>
+        <button class="btn-primary" onclick="irPara('materiais')">+ Novo material</button>
+      </div>
+      <div class="metricas">
+        <div class="metrica-card">
+          <div class="metrica-label">Materiais</div>
+          <div class="metrica-valor" id="dash-total">—</div>
+        </div>
+        <div class="metrica-card">
+          <div class="metrica-label">Itens em estoque</div>
+          <div class="metrica-valor" id="dash-estoque">—</div>
+        </div>
+        <div class="metrica-card">
+          <div class="metrica-label">Valor estimado</div>
+          <div class="metrica-valor" id="dash-valor">—</div>
+        </div>
+        <div class="metrica-card">
+          <div class="metrica-label">Sem estoque</div>
+          <div class="metrica-valor" style="color:var(--red)" id="dash-zerados">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Material</th><th>Fonte</th><th>Preço</th><th>Estoque</th></tr></thead>
+          <tbody id="dash-tabela"><tr><td colspan="4" class="vazio">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATERIAIS -->
+    <div class="pagina" id="pag-materiais">
+      <div class="pag-header">
+        <h1 class="pag-titulo">Materiais</h1>
+        <button class="btn-primary" onclick="abrirModalMaterial()">+ Novo material</button>
+      </div>
+      <div class="flex" style="margin-bottom:16px">
+        <div class="busca-wrap" style="flex:1; max-width:300px">
+          <span class="busca-icon">🔍</span>
+          <input type="search" id="busca-mat" placeholder="Buscar material ou fonte..." oninput="buscarMateriais()">
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Descrição</th><th>Fonte</th><th>Preço</th><th>Estoque</th><th>Tags</th><th></th></tr></thead>
+          <tbody id="mat-tabela"><tr><td colspan="6" class="vazio">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ESTOQUE -->
+    <div class="pagina" id="pag-estoque">
+      <div class="pag-header">
+        <h1 class="pag-titulo">Estoque</h1>
+      </div>
+      <div class="estoque-grid" id="estoque-grid">
+        <div class="vazio">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- MOVIMENTAÇÕES -->
+    <div class="pagina" id="pag-movimentacoes">
+      <div class="pag-header">
+        <h1 class="pag-titulo">Movimentações</h1>
+        <button class="btn-primary" onclick="abrirModalMovi()">+ Registrar</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Material</th><th>Tipo</th><th>Quantidade</th><th>Observação</th><th>Data</th></tr></thead>
+          <tbody id="movi-tabela"><tr><td colspan="5" class="vazio">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: MATERIAL
+     ============================================================ -->
+<div class="modal-fundo" id="modal-material">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-titulo" id="modal-mat-titulo">Novo material</span>
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-material')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="erro-material" class="alerta alerta-erro"></div>
+      <input type="hidden" id="mat-id">
+      <div class="form-grupo">
+        <label>Descrição *</label>
+        <input type="text" id="mat-descricao" placeholder="Ex: Blusa P">
+      </div>
+      <div class="form-linha">
+        <div class="form-grupo">
+          <label>Preço (R$) *</label>
+          <input type="number" id="mat-preco" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-grupo">
+          <label>Fonte *</label>
+          <input type="text" id="mat-fonte" placeholder="Ex: Riachuelo">
+        </div>
+      </div>
+      <div class="form-linha">
+        <div class="form-grupo">
+          <label>Telefone da fonte</label>
+          <input type="tel" id="mat-telefone" placeholder="85 99999-9999">
+        </div>
+        <div class="form-grupo">
+          <label>E-mail da fonte</label>
+          <input type="email" id="mat-email" placeholder="contato@fonte.com">
+        </div>
+      </div>
+      <div class="form-grupo">
+        <label>Palavras-chave (separadas por vírgula)</label>
+        <input type="text" id="mat-palavras" placeholder="Blusa, Roupa, Feminino">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal('modal-material')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarMaterial()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: MOVIMENTAÇÃO
+     ============================================================ -->
+<div class="modal-fundo" id="modal-movi">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-titulo">Registrar movimentação</span>
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-movi')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="erro-movi" class="alerta alerta-erro"></div>
+      <div class="form-grupo">
+        <label>Material *</label>
+        <select id="movi-material"></select>
+      </div>
+      <div class="form-linha">
+        <div class="form-grupo">
+          <label>Tipo *</label>
+          <select id="movi-tipo">
+            <option value="entrada">↑ Entrada</option>
+            <option value="saida">↓ Saída</option>
+            <option value="ajuste">⚙ Ajuste manual</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label>Quantidade *</label>
+          <input type="number" id="movi-quantidade" value="1" min="1">
+        </div>
+      </div>
+      <div class="form-grupo">
+        <label>Observação</label>
+        <textarea id="movi-obs" placeholder="Ex: Venda balcão, compra nova coleção..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal('modal-movi')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarMovi()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: CONFIRMAR EXCLUSÃO
+     ============================================================ -->
+<div class="modal-fundo" id="modal-delete">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-titulo">Excluir material</span>
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-delete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text2)">Tem certeza que deseja excluir <strong id="delete-nome" style="color:var(--text1)"></strong>? Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fecharModal('modal-delete')">Cancelar</button>
+      <button class="btn-danger" onclick="confirmarDelete()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ---- CONFIG ----
+// Mude para a URL do seu backend:
+const API = 'http://localhost/inven/api.php';
+
+// ---- ESTADO ----
+let materiais  = [];
+let deleteId   = null;
+let paginaAtual = 'dashboard';
+
+// ================================================================
+//  AUTENTICAÇÃO
+// ================================================================
+
+function token()   { return localStorage.getItem('inven_token'); }
+function usuario() { return JSON.parse(localStorage.getItem('inven_user') || '{}'); }
+
+function mostrarCadastro() {
+  document.getElementById('form-login').classList.add('hidden');
+  document.getElementById('form-cadastro').classList.remove('hidden');
+}
+function mostrarLogin() {
+  document.getElementById('form-cadastro').classList.add('hidden');
+  document.getElementById('form-login').classList.remove('hidden');
+}
+
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  const erroEl = document.getElementById('erro-login');
+  erroEl.classList.remove('ativo');
+
+  if (!email || !senha) { erroEl.textContent = 'Preencha e-mail e senha.'; erroEl.classList.add('ativo'); return; }
+
+  const res = await api('POST', 'login', { email, senha });
+  if (res.erro) { erroEl.textContent = res.erro; erroEl.classList.add('ativo'); return; }
+
+  localStorage.setItem('inven_token', res.token);
+  localStorage.setItem('inven_user', JSON.stringify(res));
+  iniciarApp();
+}
+
+async function fazerCadastro() {
+  const nome  = document.getElementById('cad-nome').value.trim();
+  const email = document.getElementById('cad-email').value.trim();
+  const senha = document.getElementById('cad-senha').value;
+  const erroEl = document.getElementById('erro-cadastro');
+  erroEl.classList.remove('ativo');
+
+  if (!nome || !email || !senha) { erroEl.textContent = 'Preencha todos os campos.'; erroEl.classList.add('ativo'); return; }
+  if (senha.length < 6) { erroEl.textContent = 'Senha precisa ter mínimo 6 caracteres.'; erroEl.classList.add('ativo'); return; }
+
+  const res = await api('POST', 'cadastro', { nome, email, senha });
+  if (res.erro) { erroEl.textContent = res.erro; erroEl.classList.add('ativo'); return; }
+
+  localStorage.setItem('inven_token', res.token);
+  localStorage.setItem('inven_user', JSON.stringify(res));
+  iniciarApp();
+}
+
+function sair() {
+  localStorage.clear();
+  location.reload();
+}
+
+// ================================================================
+//  INICIALIZAÇÃO
+// ================================================================
+
+function iniciarApp() {
+  document.getElementById('tela-auth').classList.add('hidden');
+  document.getElementById('tela-app').classList.remove('hidden');
+  document.getElementById('sidebar-nome').textContent = usuario().nome || usuario().email;
+  carregarMateriais();
+}
+
+window.onload = () => {
+  if (token()) iniciarApp(); 
+};
+
+// ================================================================
+//  NAVEGAÇÃO
+// ================================================================
+
+function irPara(pag) {
+  document.querySelectorAll('.pagina').forEach(p => p.classList.remove('ativa'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('ativo'));
+  document.getElementById('pag-' + pag).classList.add('ativa');
+  document.getElementById('nav-' + pag).classList.add('ativo');
+  paginaAtual = pag;
+
+  if (pag === 'dashboard')      renderDashboard();
+  if (pag === 'materiais')      renderMateriais();
+  if (pag === 'estoque')        renderEstoque();
+  if (pag === 'movimentacoes')  carregarMovimentacoes();
+}
+
+// ================================================================
+//  API HELPER
+// ================================================================
+
+async function api(method, rota, body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (token()) opts.headers['Authorization'] = 'Bearer ' + token();
+  if (body) opts.body = JSON.stringify(body);
+
+  try {
+    const res = await fetch(`${API}?rota=${rota}`, opts);
+    return await res.json();
+  } catch (e) {
+    return { erro: 'Não foi possível conectar ao servidor. Verifique se o XAMPP está rodando.' };
+  }
+}
+
+// ================================================================
+//  MATERIAIS
+// ================================================================
+
+async function carregarMateriais() {
+  const res = await api('GET', 'materiais');
+  if (res.erro) { toast(res.erro, true); return; }
+  materiais = res.dados || [];
+  renderDashboard();
+  renderMateriais();
+  renderEstoque();
+}
+
+function buscarMateriais() {
+  const busca = document.getElementById('busca-mat').value.toLowerCase();
+  const filtrado = materiais.filter(m =>
+    m.descricao.toLowerCase().includes(busca) ||
+    m.fonte.toLowerCase().includes(busca)
+  );
+  renderTabelaMateriais(filtrado);
+}
+
+function renderDashboard() {
+  const total   = materiais.length;
+  const estoque = materiais.reduce((s, m) => s + Number(m.estoque), 0);
+  const valor   = materiais.reduce((s, m) => s + Number(m.estoque) * Number(m.preco), 0);
+  const zerados = materiais.filter(m => Number(m.estoque) === 0).length;
+
+  document.getElementById('dash-total').textContent   = total;
+  document.getElementById('dash-estoque').textContent = estoque;
+  document.getElementById('dash-valor').textContent   = 'R$ ' + valor.toFixed(2);
+  document.getElementById('dash-zerados').textContent = zerados;
+
+  const tbody = document.getElementById('dash-tabela');
+  if (!materiais.length) { tbody.innerHTML = '<tr><td colspan="4" class="vazio">Nenhum material cadastrado.</td></tr>'; return; }
+
+  tbody.innerHTML = materiais.slice(0, 8).map(m => `
+    <tr>
+      <td class="destaque">${m.descricao}</td>
+      <td>${m.fonte}</td>
+      <td>R$ ${Number(m.preco).toFixed(2)}</td>
+      <td>${badgeEstoque(m.estoque)}</td>
+    </tr>`).join('');
+}
+
+function renderMateriais() {
+  renderTabelaMateriais(materiais);
+}
+
+function renderTabelaMateriais(lista) {
+  const tbody = document.getElementById('mat-tabela');
+  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="6" class="vazio">Nenhum material encontrado.</td></tr>'; return; }
+
+  tbody.innerHTML = lista.map(m => `
+    <tr>
+      <td class="destaque">${m.descricao}</td>
+      <td>${m.fonte}</td>
+      <td>R$ ${Number(m.preco).toFixed(2)}</td>
+      <td>${badgeEstoque(m.estoque)}</td>
+      <td style="font-size:12px;color:var(--text3)">${(m.palavras_chave || []).join(', ')}</td>
+      <td>
+        <div class="flex">
+          <button class="btn-secondary btn-sm" onclick="editarMaterial(${m.id})">✏</button>
+          <button class="btn-danger btn-sm"    onclick="abrirDelete(${m.id},'${m.descricao.replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function badgeEstoque(qt) {
+  qt = Number(qt);
+  if (qt === 0) return '<span class="badge badge-vermelho">Sem estoque</span>';
+  if (qt <= 4)  return `<span class="badge badge-amarelo">${qt} (baixo)</span>`;
+  return `<span class="badge badge-verde">${qt}</span>`;
+}
+
+function renderEstoque() {
+  const grid = document.getElementById('estoque-grid');
+  if (!materiais.length) { grid.innerHTML = '<div class="vazio">Nenhum material cadastrado.</div>'; return; }
+
+  grid.innerHTML = materiais.map(m => {
+    const qt = Number(m.estoque);
+    const cls = qt === 0 ? 'zerado' : qt <= 4 ? 'baixo' : '';
+    return `
+      <div class="estoque-card ${cls}">
+        <div class="est-nome">${m.descricao}</div>
+        <div class="est-fonte">${m.fonte} · R$ ${Number(m.preco).toFixed(2)}</div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="movRapido(${m.id},'saida')">−</button>
+          <div class="qty-num" id="qt-${m.id}">${qt}</div>
+          <button class="qty-btn" onclick="movRapido(${m.id},'entrada')">+</button>
+          ${badgeEstoque(qt)}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function movRapido(id, tipo) {
+  const res = await api('POST', `estoque/${id}/movimentar`, { tipo, quantidade: 1 });
+  if (res.erro) { toast(res.erro, true); return; }
+  const m = materiais.find(x => x.id == id);
+  if (m) {
+    m.estoque = res.novo_estoque;
+    const el = document.getElementById('qt-' + id);
+    if (el) el.textContent = res.novo_estoque;
+    renderEstoque();
+    renderDashboard();
+  }
+  toast(tipo === 'entrada' ? 'Entrada registrada!' : 'Saída registrada!');
+}
+
+// ---- CRUD MATERIAIS ----
+
+function abrirModalMaterial() {
+  document.getElementById('modal-mat-titulo').textContent = 'Novo material';
+  document.getElementById('mat-id').value        = '';
+  document.getElementById('mat-descricao').value = '';
+  document.getElementById('mat-preco').value     = '';
+  document.getElementById('mat-fonte').value     = '';
+  document.getElementById('mat-telefone').value  = '';
+  document.getElementById('mat-email').value     = '';
+  document.getElementById('mat-palavras').value  = '';
+  document.getElementById('erro-material').classList.remove('ativo');
+  abrirModal('modal-material');
+}
+
+function editarMaterial(id) {
+  const m = materiais.find(x => x.id == id);
+  if (!m) return;
+  document.getElementById('modal-mat-titulo').textContent = 'Editar material';
+  document.getElementById('mat-id').value        = m.id;
+  document.getElementById('mat-descricao').value = m.descricao;
+  document.getElementById('mat-preco').value     = m.preco;
+  document.getElementById('mat-fonte').value     = m.fonte;
+  document.getElementById('mat-telefone').value  = m.telefone || '';
+  document.getElementById('mat-email').value     = m.email    || '';
+  document.getElementById('mat-palavras').value  = (m.palavras_chave || []).join(', ');
+  document.getElementById('erro-material').classList.remove('ativo');
+  abrirModal('modal-material');
+}
+
+async function salvarMaterial() {
+  const id        = document.getElementById('mat-id').value;
+  const descricao = document.getElementById('mat-descricao').value.trim();
+  const preco     = document.getElementById('mat-preco').value;
+  const fonte     = document.getElementById('mat-fonte').value.trim();
+  const telefone  = document.getElementById('mat-telefone').value.trim();
+  const email     = document.getElementById('mat-email').value.trim();
+  const palavras  = document.getElementById('mat-palavras').value.split(',').map(p => p.trim()).filter(Boolean);
+  const erroEl    = document.getElementById('erro-material');
+  erroEl.classList.remove('ativo');
+
+  if (!descricao || !preco || !fonte) {
+    erroEl.textContent = 'Preencha Descrição, Preço e Fonte.';
+    erroEl.classList.add('ativo'); return;
+  }
+
+  const body = { descricao, preco: Number(preco), fonte, telefone, email, palavras_chave: palavras };
+  const res  = id
+    ? await api('PUT',  `materiais/${id}`, body)
+    : await api('POST', 'materiais', body);
+
+  if (res.erro) { erroEl.textContent = res.erro; erroEl.classList.add('ativo'); return; }
+
+  fecharModal('modal-material');
+  toast(id ? 'Material atualizado!' : 'Material cadastrado!');
+  await carregarMateriais();
+  if (paginaAtual === 'materiais') renderMateriais();
+}
+
+function abrirDelete(id, nome) {
+  deleteId = id;
+  document.getElementById('delete-nome').textContent = nome;
+  abrirModal('modal-delete');
+}
+
+async function confirmarDelete() {
+  const res = await api('DELETE', `materiais/${deleteId}`);
+  if (res.erro) { toast(res.erro, true); return; }
+  fecharModal('modal-delete');
+  toast('Material excluído.');
+  await carregarMateriais();
+}
+
+// ================================================================
+//  MOVIMENTAÇÕES
+// ================================================================
+
+async function carregarMovimentacoes() {
+  const res = await api('GET', 'movimentacoes');
+  if (res.erro) { toast(res.erro, true); return; }
+  const tbody = document.getElementById('movi-tabela');
+  const lista = res.dados || [];
+
+  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhuma movimentação.</td></tr>'; return; }
+
+  tbody.innerHTML = lista.map(m => {
+    const cor   = m.tipo === 'entrada' ? 'verde' : m.tipo === 'saida' ? 'vermelho' : 'amarelo';
+    const icone = m.tipo === 'entrada' ? '↑' : m.tipo === 'saida' ? '↓' : '⚙';
+    const data  = new Date(m.criado_em).toLocaleString('pt-BR');
+    return `<tr>
+      <td class="destaque">${m.material}</td>
+      <td><span class="badge badge-${cor}">${icone} ${m.tipo}</span></td>
+      <td>${m.quantidade}</td>
+      <td style="color:var(--text3)">${m.observacao || '—'}</td>
+      <td style="font-size:12px;color:var(--text3)">${data}</td>
+    </tr>`;
+  }).join('');
+}
+
+function abrirModalMovi() {
+  const sel = document.getElementById('movi-material');
+  sel.innerHTML = materiais.map(m =>
+    `<option value="${m.id}">${m.descricao} (estoque: ${m.estoque})</option>`
+  ).join('');
+  document.getElementById('movi-quantidade').value = 1;
+  document.getElementById('movi-obs').value = '';
+  document.getElementById('erro-movi').classList.remove('ativo');
+  abrirModal('modal-movi');
+}
+
+async function salvarMovi() {
+  const material_id = document.getElementById('movi-material').value;
+  const tipo        = document.getElementById('movi-tipo').value;
+  const quantidade  = Number(document.getElementById('movi-quantidade').value);
+  const observacao  = document.getElementById('movi-obs').value;
+  const erroEl      = document.getElementById('erro-movi');
+  erroEl.classList.remove('ativo');
+
+  if (!material_id || quantidade <= 0) {
+    erroEl.textContent = 'Selecione um material e informe a quantidade.';
+    erroEl.classList.add('ativo'); return;
+  }
+
+  const res = await api('POST', `estoque/${material_id}/movimentar`, { tipo, quantidade, observacao });
+  if (res.erro) { erroEl.textContent = res.erro; erroEl.classList.add('ativo'); return; }
+
+  fecharModal('modal-movi');
+  toast('Movimentação registrada!');
+  await carregarMateriais();
+  await carregarMovimentacoes();
+}
+
+// ================================================================
+//  MODAL / TOAST / UTILITÁRIOS
+// ================================================================
+
+function abrirModal(id)  { document.getElementById(id).classList.add('aberto'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('aberto'); }
+
+// Fecha modal ao clicar no fundo
+document.querySelectorAll('.modal-fundo').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) fecharModal(el.id); });
+});
+
+function toast(msg, erro = false) {
+  const el = document.getElementById('toast');
+  el.textContent = (erro ? '❌ ' : '✅ ') + msg;
+  el.style.borderColor = erro ? 'rgba(248,113,113,.4)' : 'rgba(52,211,153,.4)';
+  el.classList.add('visivel');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('visivel'), 3000);
+}
+</script>
+</body>
+</html>
