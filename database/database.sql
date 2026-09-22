@@ -1,6 +1,6 @@
 
 -- ============================================================
---  INVEN — Banco de dados simplificado
+--  INVEN — Banco de dados simplificado.
 --  Cole no phpMyAdmin > SQL e clique Executar
 -- ============================================================
 
