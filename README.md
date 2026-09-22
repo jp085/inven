@@ -1,7 +1,7 @@
 # Inven — Sistema de Controle de Estoque
 
 > Sistema web de controle de estoque desenvolvido para pequenos e médios empreendedores, permitindo o gerenciamento de materiais, entradas e saídas de estoque e histórico de movimentações de forma simples e acessível via navegador.
-
+.
 ---
 
 ## Sumário
