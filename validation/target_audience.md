@@ -3,7 +3,7 @@
 > **Documento:** Perfil do público-alvo e contexto social
 > **Projeto:** Inven — Sistema de Controle de Estoque
 > **Curso:** Análise e Desenvolvimento de Sistemas · UNIFOR
-
+.
 ---
 
 ## 1. Identificação Específica do Público-Alvo
