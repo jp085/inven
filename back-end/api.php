@@ -1,6 +1,6 @@
 <?php
 // ============================================================
-//  INVEN — API completa em um único arquivo
+//  INVEN — API completa em um único arquivo.
 //  Coloque em: C:\xampp\htdocs\inven\api.php
 //  Acesso:     http://localhost/inven/api.php
 // ============================================================
