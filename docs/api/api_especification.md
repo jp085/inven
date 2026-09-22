@@ -1,4 +1,4 @@
-# Documentação da API Inven
+# Documentação da API Inven.
 
 > **Base URL (desenvolvimento):** `http://localhost/inven/api.php`  
 > **Formato:** Todas as requisições e respostas utilizam `Content-Type: application/json`  
